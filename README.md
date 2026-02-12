@@ -26,4 +26,5 @@ Basically instead of just vibe coding the user is being assisted by the agent an
 Although the generation process takes longer as AI agent versions or strength of reasoning increase the quality of the generated product improves accordingly and thats why I selected the highest versions.
 
 10) After that I started giving inputs of what I want the agent to create which is the triangle app. After every input codex either asked me a question to clearify what I want it to do or it gave me an output which also made me able to give another input for if I wanted to make changes at the output.
-11) 
+11) The prompts I gave to it were
+- 
