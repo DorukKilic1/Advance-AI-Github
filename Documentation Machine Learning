@@ -1,0 +1,178 @@
+***What this project is:***
+
+This project investigates the probability distribution of a real dataset and sets up a basic “data science workflow”.
+The dataset I picked is called students_ai_usage.csv and it includes variables like age, study hours, grades and screen time.
+
+
+***The assigment:***
+
+Does my data follow a normal distribution or not meaning is it distributed evenly or not.
+If it doesn’t look normal what distribution fits better (I tried normal vs lognormal).
+Lognormal is when the data is not symmetricly distributed.
+
+
+***Tools I used (libraries etc.)***
+
+	•	pandas: reads the CSV file and works with the dataset.
+	•	numpy: makes calculations with arrays from the dataset.
+	•	matplotlib: creates graphs (like histogram, boxplot, Q-Q plot etc.).
+	•	scipy.stats: tests normality + fits distribution.
+
+
+***What the code does***
+
+1) Loading the dataset
+
+I import the CSV file to a pandas DataFrame. 
+Then I print the dataset shape with rows and coılums.
+Then I print the column names.
+After that I preview first rows with using df.head().
+
+This is just to confirm the file loaded correctly.
+
+2) Converting important columns to numeric
+
+The columns I use should be numbers but CSV files can store them as text.
+So I converted these columns:
+
+	•	age
+	•	study_hours_per_day
+	•	grades_before_ai
+	•	grades_after_ai
+	•	daily_screen_time_hours
+
+I used pd.to_numeric(..., errors="coerce") to do that.
+
+If something cannot be converted to a number it turns into NaN meaning missing.
+So I check how many missing values exist.
+
+
+3) Picking the target variable and cleaning it
+
+I focused on target = "grades_after_ai".
+
+Then I removed the missing values from this column by using x = df[target].dropna().
+
+That removes the missing values and gives me the final list of grade values to analyze.
+
+
+4) Summarising statistics
+
+I calculated these values on grades_after_ai:
+
+	•	Count: how many valid grade values exist
+	•	Mean: average grade
+	•	Median: middle grade (more resistant to outliers)
+	•	Standard deviation: how spread out the grades are
+	•	Variance: basically standard deviation squared (another spread measure)
+	•	Skewness: checks if it’s more stretched to the left or right
+	•	positive skew = longer tail on the right
+	•	negative skew = longer tail on the left
+	•	Kurtosis: checks how “peaked” or “flat” the distribution is compared to normal
+
+Then I put them to the table called summary_table.
+
+
+
+5) Graphs I used 
+
+Histogram
+  A histogram shows how often grade values appear.
+  This is the first “check” for whether the graph looks bell-shaped or not.
+
+Boxplot
+A boxplot helps spot:
+
+	•	outliers
+	•	how spread out values are
+	•	whether the data is symmetric or not
+
+Q-Q Plot (Normality check)
+  If the data is normal the points should follow a straight line.
+  If it curves away it means it’s not normal.
+
+
+6) Normality tests
+
+Shapiro–Wilk test
+  This test checks normality but it becomes sensitive when the dataset is large.
+  So my code samples only 5000 points by x_sample = x.sample(min(len(x), 5000), random_state=42).
+
+D’Agostino K² test
+
+This also checks normality but it uses skewness + kurtosis.
+I decided by using the p-value rule meaning if its equal to or smaller then 0.05 its not normal but if its bigger then 
+0.05 its looks close enough so the code fails to reject normality and it comes out normal.
+
+My code prints a conclusion based on the D’Agostino test.
+I learned that A p-value doesn’t “prove” normality. It only tells whether the data is inconsistent with normal based on the test.
+
+
+7) Distribution fitting (Normal vs Lognormal)
+
+Normal fit
+	•	mean (mu)
+	•	standard deviation (sigma)
+I computed AIC by this.
+
+Lognormal fit
+Lognormal distributions only work with positive values.
+So I fillered by using positive_data = data[data > 0].
+
+Then I fitted lognormal parameters and computed AIC again.
+
+Then I compared them.
+
+AIC is used to compare model fit meaning the lower the AIC is the better it fits.
+
+So whichever distribution gave me the smaller AIC is the one that fits better in this comparison.
+
+
+8) Limitations 
+
+	•	Dropping missing values can change the distribution alot if too much of values came out missing.
+	•	Normality tests can come out “not normal” even when it looks close especially with big data.
+	•	Comparing only normal vs lognormal is limited other distributions might fit better too.
+
+9) How to run
+
+	1.	I put students_ai_usage.csv in the same folder as the notebook/script
+	2.	I installed the dependencies (pandas, numpy, matplotlib, scipy).
+	3.	I ran the notebook from start to end.
+	4.	I Checked :
+	  •	summary table
+	  •	graphs
+	  •	p-values
+	  •	AIC outputs
+
+10) Creations
+
+	•	SciPy Stats documentation (normality tests and distribution fitting)
+	•	pandas documentation (reading the CSV file and cleaning the data)
+	•	Basic statistics explanations (mean/median/std dev, skewness, kurtosis)
+
+Reflection:
+
+At the start I thought “distribution” just meant making a histogram but now I understand that it has alot more checks like:
+
+	•	visual check (histogram / Q-Q plot)
+	•	statistical test (p-values)
+	•	model comparison (AIC)
+
+I wrote this code from the help of AI but I learned what each code does line by line so now I can write it myself.
+
+***Things I learned/improved:***
+
+- How to import libraries.
+- Which libraries are used for what actions.
+- How to import a new dataset.
+- How to use AI more efficently.
+- How to document on github better.
+- How to use the imported libraries based on datasets.
+- How some graphs work.
+- How to put a dataset to a graph.
+- Converting dataset values that might have came out as text to numbers.
+- Removing the missing values after number converstion.
+- How to find the best fitting graph for a dataset.
+- How to code these.
+
