@@ -1,0 +1,181 @@
+***Documentation of My AI Data Analysis Project***
+
+Introduction:
+In this project I analyzed a dataset called students_ai_usage.csv. The assigments purpose was to analzye the data, understand how students use artificial intelligence tools and whether using AI seems connected to changes in grades, study habits and screen time. 
+I also used some more advanced data analysis methods like PCA, ICA, FFT, wavelets, and filtering.
+
+While writing this code I divided the notebook into clear parts for better organization. Each section has a different purpose like loading the data, cleaning it, analyzing it, visualizing it or applying transforms.
+
+***Description of the Data:***
+
+The dataset contains information about students and their AI usage. Some of the columns are:
+	•	age
+	•	education_level
+	•	study_hours_per_day
+	•	uses_ai
+	•	ai_tools_used
+	•	purpose_of_ai
+	•	grades_before_ai
+	•	grades_after_ai
+	•	daily_screen_time_hours
+
+This dataset mixes both numerical data and categorical data. For example, grades and study hours are numerical, while education level and AI tool used are categorical. Because of that, I had to preprocess the two types differently later in the project.
+
+I also created two extra variables:
+	•	grade_improvement = grades_after_ai - grades_before_ai
+	•	uses_ai_binary = converting Yes/No into 1/0
+
+These new columns made it easier to compare students and calculate relationships.
+
+Data Inspection and Cleaning
+
+The first step in my code was loading the dataset and inspecting it. I checked:
+	•	the first 5 rows
+	•	dataset shape
+	•	column names
+	•	dataset info
+	•	missing values
+
+This helped me understand what I was working with before starting any analysis.
+
+After that, I cleaned the data by removing extra spaces from the column names and from text columns. This is an important step because sometimes categories like "Yes" and " Yes " can look the same to a human but are treated as different values by Python. Cleaning made the dataset more consistent and prevented mistakes later.
+
+Descriptive Analysis
+
+After cleaning the data, I explored it with descriptive statistics. I used .describe() for the numeric columns and .value_counts() for the categorical columns. This helped me see the overall patterns in the dataset, like averages, spreads, and how often each category appeared.
+
+Then I created visualizations such as:
+	•	bar charts for AI usage and education level
+	•	histogram of grade improvement
+	•	scatter plots showing relationships between:
+	•	study hours and grades after AI
+	•	screen time and grade improvement
+	•	grades before AI and grades after AI
+
+These graphs made the dataset easier to understand visually. Instead of only reading numbers, I could actually see the patterns.
+
+Comparing Different Groups
+
+One of the most important parts of my analysis was comparing groups. I compared:
+	•	AI users vs non-users
+	•	different AI tools
+	•	different purposes of AI use
+	•	school students vs college students
+
+For example, I calculated the average study time, grades, screen time, and grade improvement for AI users and non-users. I also checked which AI tools were linked to higher average grade improvement, and whether using AI for homework, research, or coding made any difference.
+
+This part of the project helped answer the real question behind the dataset: not just “Do students use AI?” but “How is that use connected to academic results?”
+
+Correlation Analysis
+
+Next, I used a correlation matrix and a heatmap to measure how strongly the numerical variables were related to each other. Correlation does not prove cause, but it helps show patterns.
+
+For example, this analysis can help show whether grade improvement is more closely related to study hours, screen time, or AI use. The heatmap was useful because it made the correlations easier to read with color and numbers together.
+
+Preprocessing for PCA and ICA
+
+Before using PCA and ICA, I needed to preprocess the dataset properly. Since the dataset has both numeric and categorical columns, I used:
+	•	SimpleImputer to fill missing values
+	•	StandardScaler to scale numeric features
+	•	OneHotEncoder to convert categorical features into machine-readable form
+	•	ColumnTransformer and Pipeline to organize these steps
+
+This preprocessing part is important because advanced methods like PCA and ICA need the data in a clean numerical format.
+
+PCA Analysis
+
+I used Principal Component Analysis (PCA) to reduce the dataset into 2 main components. PCA helps summarize the most important variation in the data with fewer dimensions.
+
+In my project, PCA allowed me to:
+	•	project the dataset into 2D
+	•	visualize students in a simpler way
+	•	measure explained variance
+	•	find which original features contributed most strongly to the principal components
+
+I also printed the top feature loadings for PC1 and PC2. This helped me understand which variables had the biggest influence in the reduced representation.
+
+ICA Analysis
+
+I also used Independent Component Analysis (ICA). Unlike PCA, which focuses on variance, ICA tries to separate hidden independent patterns in the data.
+
+In this project, ICA was another way to visualize the structure of the dataset and compare it with PCA. Even if the dataset was not a perfect case for ICA, it still helped demonstrate a different kind of transform and showed how independent patterns might appear in student data.
+
+Signal Processing Demonstrations
+
+One of the most creative parts of my project was turning the grade_improvement column into a simple one-dimensional signal. I clearly noted in the code that this is only a demonstration, because the student index is not a true time axis. Still, it let me apply signal-processing methods required by the assignment.
+
+Sonification
+
+I converted the grade improvement signal into audio. This means I turned the data into sound so it could be explored in a different way. This was interesting because it showed that data does not always need to be seen as a graph — it can also be heard.
+
+FFT
+
+I used the Fast Fourier Transform (FFT) to study the frequency content of the signal. This showed whether there were repeating patterns or dominant frequencies in the sequence.
+
+Spectrogram
+
+I created a spectrogram to show how the frequency content changed across the signal. Again, since this is not true time-series data, it is more of a demonstration than a real scientific conclusion, but it still showed how the method works.
+
+Wavelets
+
+I applied a wavelet transform to look at localized patterns at different scales. Wavelets are useful because they can capture both position and scale at the same time, unlike FFT which focuses more on frequency only.
+
+Filters
+
+I used low-pass and high-pass Butterworth filters.
+	•	The low-pass filter smoothed the signal.
+	•	The high-pass filter highlighted faster changes.
+
+This helped show how filters can isolate different kinds of patterns.
+
+Compressed Sensing Style Demonstration
+
+Finally, I created a simple compressed sensing style demo by randomly sampling only part of the signal and reconstructing the rest with interpolation. This was not full compressed sensing in the advanced mathematical sense, but it demonstrated the basic idea that we can estimate missing data from partial observations.
+
+What My Analysis Shows
+
+Overall, this project helped me study student AI usage from different angles. The basic analysis showed how AI use connects with grades, study time, and screen time. The group comparisons made it possible to compare different types of students and different kinds of AI use. The advanced transforms showed that the same dataset can also be explored using more technical methods from machine learning and signal processing.
+
+One important thing I learned is that data analysis is not just about running code. It is also about thinking carefully about what the data actually means. For example, I had to be honest that the signal processing part was a demonstration and not a real time-series experiment. I think that makes the project stronger, because it shows that I understand the limits of my own analysis.
+
+Conclusion
+
+To conclude, this project combines data cleaning, visualization, group comparison, correlation analysis, preprocessing, PCA, ICA, and signal processing demonstrations in one workflow. I chose the topic because AI in education is very relevant today, especially for students.
+
+I think this project shows both the practical side of AI and the technical side of data analysis. It helped me understand not only how students use AI, but also how different methods can be used to explore a dataset in multiple ways. If I improved this project in the future, I would use a larger dataset and maybe add real statistical tests or machine learning models to make the conclusions stronger.
+
+⸻
+
+Short “Code Explanation” Section
+
+You can also add this under your document if your teacher wants a more direct explanation of the code:
+
+Code Structure Summary
+
+My code is divided into 24 parts:
+	1.	importing libraries
+	2.	loading and inspecting the dataset
+	3.	cleaning text and column names
+	4.	creating new features
+	5.	descriptive statistics
+	6.	basic visualizations
+	7.	comparing AI users and non-users
+	8.	comparing AI tools
+	9.	comparing purposes of AI use
+	10.	correlation analysis
+	11.	preprocessing data
+	12.	PCA
+	13.	PCA feature importance
+	14.	ICA
+	15.	comparing education levels
+	16.	deeper AI-user analysis
+	17.	creating a signal from grade improvement
+	18.	sonification
+	19.	FFT
+	20.	spectrogram
+	21.	wavelets
+	22.	filters
+	23.	compressed sensing style demo
+	24.	final summary of results
+
+This structure made the notebook easier to read and made each part of the assignment clear.
