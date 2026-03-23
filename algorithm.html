@@ -38,6 +38,28 @@
       padding: 30px 20px 20px 20px;
     }
 
+    .left-link-panel {
+      padding-top: 8px;
+      padding-left: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .tool-link {
+      color: white;
+      font-size: 1.6rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .tool-link:hover {
+      color: #ff4d4d;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.35);
+    }
+
     .poster-card {
       position: fixed;
       right: 24px;
@@ -119,6 +141,10 @@
       .top-banner {
         font-size: 1.5rem;
       }
+
+      .tool-link {
+        font-size: 1.3rem;
+      }
     }
 
     @media (max-width: 600px) {
@@ -139,6 +165,44 @@
   <div class="top-banner">Algorithm Website</div>
 
   <main class="page-content">
+    <div class="left-link-panel">
+      <a
+        href="https://github.com/DorukKilic1/Advance-AI-Github/blob/main/Data%20Science%20Fitting"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="tool-link"
+      >
+        ToolsFittingMachine
+      </a>
+
+      <a
+        href="https://github.com/DorukKilic1/Advance-AI-Github/blob/main/Grades.ipynb"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="tool-link"
+      >
+        LearningProbability
+      </a>
+
+      <a
+        href="https://github.com/DorukKilic1/Advance-AI-Github/blob/main/Density%20Estimation.ipynb"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="tool-link"
+      >
+        Density Estimation
+      </a>
+
+      <a
+        href="https://github.com/DorukKilic1/Advance-AI-Github/blob/main/presentation.ipynb"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="tool-link"
+      >
+        Transformations
+      </a>
+    </div>
+
     <div class="poster-card">
       <img
         src="poster.png"
