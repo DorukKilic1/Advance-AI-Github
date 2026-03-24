@@ -106,6 +106,7 @@
       cursor: pointer;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
       background: #111;
+      object-fit: cover;
     }
 
     .click-image:hover {
@@ -298,7 +299,7 @@
     <div class="right-images">
       <div class="image-card">
         <img
-          src="triangle.png"
+          src="https://github.com/user-attachments/assets/df27a626-ca9d-4fd7-a618-0fb8802fc4e3"
           alt="Triangle Solver Website"
           class="click-image"
           id="triangleImage"
@@ -343,7 +344,10 @@
     }
 
     triangleImage.addEventListener("click", () => {
-      openOverlay("triangle.png", "Triangle Solver Website");
+      openOverlay(
+        "https://github.com/user-attachments/assets/df27a626-ca9d-4fd7-a618-0fb8802fc4e3",
+        "Triangle Solver Website"
+      );
     });
 
     posterImage.addEventListener("click", () => {
