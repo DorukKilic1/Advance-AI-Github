@@ -35,7 +35,7 @@
     .page-content {
       min-height: calc(100vh - 90px);
       position: relative;
-      padding: 30px 20px 60px 20px;
+      padding: 30px 20px 80px 20px;
     }
 
     .left-link-panel {
@@ -89,11 +89,12 @@
       width: min(360px, 32vw);
       display: flex;
       flex-direction: column;
-      gap: 26px;
+      gap: 24px;
       z-index: 5;
     }
 
     .image-card {
+      width: 100%;
       text-align: center;
     }
 
@@ -161,12 +162,15 @@
 
     .footer-mark {
       position: fixed;
-      left: 16px;
+      left: 50%;
       bottom: 12px;
+      transform: translateX(-50%);
       font-size: 0.85rem;
       color: white;
       opacity: 0.9;
       z-index: 20;
+      text-align: center;
+      white-space: nowrap;
     }
 
     @media (max-width: 900px) {
@@ -203,7 +207,8 @@
 
       .footer-mark {
         position: static;
-        margin: 30px 0 10px 16px;
+        transform: none;
+        margin: 30px auto 10px auto;
       }
     }
   </style>
