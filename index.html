@@ -35,7 +35,7 @@
     .page-content {
       min-height: calc(100vh - 90px);
       position: relative;
-      padding: 30px 20px 20px 20px;
+      padding: 30px 20px 60px 20px;
     }
 
     .left-link-panel {
@@ -82,16 +82,22 @@
       opacity: 1;
     }
 
-    .poster-card {
+    .right-images {
       position: fixed;
       right: 24px;
       bottom: 24px;
       width: min(360px, 32vw);
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
       z-index: 5;
     }
 
-    .poster-image {
+    .image-card {
+      text-align: center;
+    }
+
+    .click-image {
       width: 100%;
       display: block;
       border: 4px solid red;
@@ -101,7 +107,7 @@
       background: #111;
     }
 
-    .poster-image:hover {
+    .click-image:hover {
       transform: scale(1.03);
       box-shadow: 0 0 22px rgba(255, 0, 0, 0.45);
     }
@@ -153,8 +159,18 @@
       color: #ddd;
     }
 
+    .footer-mark {
+      position: fixed;
+      left: 16px;
+      bottom: 12px;
+      font-size: 0.85rem;
+      color: white;
+      opacity: 0.9;
+      z-index: 20;
+    }
+
     @media (max-width: 900px) {
-      .poster-card {
+      .right-images {
         width: min(280px, 42vw);
         right: 16px;
         bottom: 16px;
@@ -174,7 +190,7 @@
     }
 
     @media (max-width: 600px) {
-      .poster-card {
+      .right-images {
         position: static;
         width: 100%;
         max-width: 320px;
@@ -183,6 +199,11 @@
 
       .page-content {
         padding-bottom: 40px;
+      }
+
+      .footer-mark {
+        position: static;
+        margin: 30px 0 10px 16px;
       }
     }
   </style>
@@ -269,31 +290,59 @@
       </div>
     </div>
 
-    <div class="poster-card">
-      <img
-        src="poster.png"
-        alt="Poster"
-        class="poster-image"
-        id="posterImage"
-      />
-      <div class="caption">Poster</div>
+    <div class="right-images">
+      <div class="image-card">
+        <img
+          src="triangle.png"
+          alt="Triangle Solver Website"
+          class="click-image"
+          id="triangleImage"
+        />
+        <div class="caption">Triangle Solver Website</div>
+      </div>
+
+      <div class="image-card">
+        <img
+          src="poster.png"
+          alt="Poster"
+          class="click-image"
+          id="posterImage"
+        />
+        <div class="caption">Poster</div>
+      </div>
     </div>
   </main>
 
   <div class="overlay" id="imageOverlay">
     <div class="overlay-content">
-      <img src="poster.png" alt="Poster enlarged" />
-      <div class="caption">Poster</div>
+      <img src="" alt="Enlarged preview" id="overlayImage" />
+      <div class="caption" id="overlayCaption"></div>
       <div class="close-text">Click anywhere to close</div>
     </div>
   </div>
 
+  <div class="footer-mark">DoDo 2025™</div>
+
   <script>
-    const posterImage = document.getElementById("posterImage");
     const imageOverlay = document.getElementById("imageOverlay");
+    const overlayImage = document.getElementById("overlayImage");
+    const overlayCaption = document.getElementById("overlayCaption");
+
+    const triangleImage = document.getElementById("triangleImage");
+    const posterImage = document.getElementById("posterImage");
+
+    function openOverlay(src, caption) {
+      overlayImage.src = src;
+      overlayCaption.textContent = caption;
+      imageOverlay.classList.add("active");
+    }
+
+    triangleImage.addEventListener("click", () => {
+      openOverlay("triangle.png", "Triangle Solver Website");
+    });
 
     posterImage.addEventListener("click", () => {
-      imageOverlay.classList.add("active");
+      openOverlay("poster.png", "Poster");
     });
 
     imageOverlay.addEventListener("click", () => {
