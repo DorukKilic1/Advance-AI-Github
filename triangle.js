@@ -24,7 +24,6 @@ const state = {
   currentAngles: null,
   history: {
     exists: false,
-    suppressed: false,
     attempt: null,
   },
 };
@@ -167,8 +166,6 @@ function applyHistory() {
   const attempt = state.history.attempt;
   if (!attempt) return;
 
-  state.history.suppressed = true;
-
   if (attempt.mode === 'draw') {
     setMode('draw', { preserve: true });
     state.points = attempt.points ? attempt.points.map((p) => ({ ...p })) : [];
@@ -183,7 +180,6 @@ function applyHistory() {
 
 function updateHistoryPanel(attempt) {
   state.history.exists = true;
-  state.history.suppressed = false;
   state.history.attempt = attempt;
   renderHistory();
 }
@@ -210,12 +206,7 @@ function renderHistory() {
     drawHistoryPlaceholder();
   }
 
-  if (state.history.suppressed) {
-    const suppressed = makeAllNA('History used as current input.');
-    setHistoryValues(suppressed, false);
-  } else {
-    setHistoryValues(attempt.results, false);
-  }
+  setHistoryValues(attempt.results, false);
 }
 
 function setHistoryValues(result, forceNA) {
