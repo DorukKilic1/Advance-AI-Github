@@ -158,10 +158,19 @@ function compute(updateHistory = true) {
   };
 
   if (updateHistory) {
-    if (state.currentAttempt) {
-      updateHistoryPanel(state.currentAttempt);
+    const previousAttempt = state.currentAttempt
+      ? JSON.parse(JSON.stringify(state.currentAttempt))
+      : null;
+
+    state.currentAttempt = JSON.parse(JSON.stringify(attempt));
+
+    if (previousAttempt) {
+      updateHistoryPanel(previousAttempt);
+    } else {
+      state.history.exists = false;
+      state.history.attempt = null;
+      renderHistory();
     }
-    state.currentAttempt = attempt;
   }
 
   renderCanvas();
@@ -179,6 +188,7 @@ function applyHistory() {
     fillAngleInputs(attempt.inputs || {});
   }
 
+  state.currentAttempt = JSON.parse(JSON.stringify(attempt));
   compute(false);
   renderHistory();
 }
