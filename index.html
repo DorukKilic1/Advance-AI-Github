@@ -136,6 +136,17 @@
       color: white;
     }
 
+    .caption-link {
+      color: white;
+      text-decoration: none;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .caption-link:hover {
+      color: #ff4d4d;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.35);
+    }
+
     .overlay {
       display: none;
       position: fixed;
@@ -330,13 +341,10 @@
           id="triangleImage"
         />
         <div class="caption">
-  <a
-    href="https://dorukkilic1.github.io/Advance-AI-Github/triangle.html"
-    style="color: white; text-decoration: none;"
-  >
-    Triangle Solver Website
-  </a>
-</div>
+          <a href="./triangle.html" class="caption-link">
+            Triangle Solver Website
+          </a>
+        </div>
       </div>
 
       <div class="image-card">
