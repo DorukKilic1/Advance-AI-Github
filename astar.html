@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A* Search Explorer</title>
+  <meta name="description" content="A simple interactive web app that teaches the A* search algorithm with a mini game." />
+  <style>
+    :root {
+      --bg: #070707;
+      --panel: #140909;
+      --panel-2: #241010;
+      --text: #f5eaea;
+      --muted: #d6bcbc;
+      --accent: #8b0000;
+      --accent-2: #d13434;
+      --good: #ff6b6b;
+      --warn: #b22222;
+      --bad: #ff4d4d;
+      --wall: #3a1515;
+      --open: #b22222;
+      --closed: #6e1a1a;
+      --path: #ff8a8a;
+      --start: #8b0000;
+      --goal: #ff4d4d;
+      --cell: #120808;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #000000, var(--bg));
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1180px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(139,0,0,0.22), rgba(0,0,0,0.72));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 22px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.25);
+    }
+
+    .hero p, .panel p, .panel li { color: var(--muted); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.2);
+    }
+
+    .panel + .panel { margin-top: 18px; }
+
+    .controls {
+      display: grid;
+      gap: 10px;
+    }
+
+    button, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: var(--panel-2);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover, select:hover { filter: brightness(1.06); }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff5f5;
+      border: none;
+    }
+
+    .secondary { background: #220d0d; }
+    .danger { background: #3a0d0d; }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .workspace {
+      display: grid;
+      gap: 18px;
+    }
+
+    .top-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .board-wrap {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4px;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 10px;
+      background: var(--cell);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #08111f;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+
+    .cell:hover {
+      transform: scale(1.03);
+      filter: brightness(1.08);
+      cursor: pointer;
+    }
+
+    .empty { background: var(--cell); color: #b7c3f0; }
+    .wall { background: var(--wall); color: #c7d2fe; }
+    .start { background: var(--start); }
+    .goal { background: var(--goal); }
+    .open { background: var(--open); }
+    .closed { background: var(--closed); }
+    .path { background: var(--path); }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      min-height: 24px;
+      font-weight: 700;
+    }
+
+    .small {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .tool-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tool.active {
+      outline: 2px solid var(--accent);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .site-footer {
+      text-align: center;
+      color: #ffffff;
+      font-size: 0.95rem;
+      padding: 26px 0 12px;
+      letter-spacing: 0.2px;
+    }
+
+    @media (max-width: 980px) {
+      .layout, .info-grid, .top-cards { grid-template-columns: 1fr; }
+      .tool-row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>A* Search Explorer</h1>
+      <p>
+        This mini web app teaches how the A* search algorithm finds the shortest path. Build your own maze,
+        watch A* explore nodes step by step, and test your understanding with a small challenge game and quiz.
+      </p>
+      <p class="small">
+        Key idea: A* chooses the node with the lowest <strong>f(n) = g(n) + h(n)</strong>, where <strong>g</strong> is the cost so far and <strong>h</strong> is the estimated distance to the goal.
+      </p>
+    </section>
+
+    <div class="layout">
+      <aside>
+        <div class="panel">
+          <h2>Controls</h2>
+          <div class="controls">
+            <button class="primary" id="runBtn">Run A*</button>
+            <button class="secondary" id="stepBtn">Step Once</button>
+            <button class="secondary" id="resetSearchBtn">Reset Search</button>
+            <button class="danger" id="clearWallsBtn">Clear Walls</button>
+            <button class="secondary" id="newMazeBtn">Generate Maze</button>
+            <select id="speedSelect">
+              <option value="500">Animation Speed: Slow</option>
+              <option value="220" selected>Animation Speed: Medium</option>
+              <option value="80">Animation Speed: Fast</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Build Mode</h3>
+          <div class="tool-row">
+            <button class="tool active" data-tool="wall">Wall</button>
+            <button class="tool" data-tool="erase">Erase</button>
+            <button class="tool" data-tool="start">Start</button>
+            <button class="tool" data-tool="goal">Goal</button>
+          </div>
+          <p class="small">Click cells to place walls, erase them, or move the start and goal.</p>
+          <div class="legend">
+            <div class="legend-item"><span class="swatch" style="background: var(--start)"></span>Start</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--goal)"></span>Goal</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--wall)"></span>Wall</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--open)"></span>Open Set</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--closed)"></span>Closed Set</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--path)"></span>Final Path</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>How A* Works</h3>
+          <ol class="small">
+            <li>Start at the green square.</li>
+            <li>Check neighboring nodes.</li>
+            <li>For each node, compute <strong>g</strong>, <strong>h</strong>, and <strong>f</strong>.</li>
+            <li>Always expand the node with the lowest <strong>f</strong>.</li>
+            <li>Stop when the goal is reached and reconstruct the best path.</li>
+          </ol>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <div class="top-cards">
+          <div class="stat">
+            <div class="stat-label">Status</div>
+            <div class="stat-value" id="statusText">Ready</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Open Nodes</div>
+            <div class="stat-value" id="openCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Visited Nodes</div>
+            <div class="stat-value" id="closedCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Path Length</div>
+            <div class="stat-value" id="pathLength">0</div>
+          </div>
+        </div>
+
+        <div class="board-wrap">
+          <h2>Interactive Grid</h2>
+          <p class="small">Create an obstacle course, then run A* and watch it search for the shortest route.</p>
+          <div class="board" id="board"></div>
+        </div>
+
+        <div class="info-grid">
+          <div class="panel">
+            <h2>Mini Game: Beat the Algorithm</h2>
+            <p>
+              Your challenge is to place walls that make the path longer without blocking the goal completely.
+              Try to create a maze where A* still succeeds, but has to explore many nodes.
+            </p>
+            <ul class="small">
+              <li>Create walls.</li>
+              <li>Press <strong>Run A*</strong>.</li>
+              <li>Goal: make visited nodes high while still keeping a valid path.</li>
+            </ul>
+            <p class="small" id="challengeResult">Challenge score will appear here after the run.</p>
+          </div>
+
+          <div class="panel">
+            <h2>Quick Quiz</h2>
+            <p><strong>Which expression does A* use to decide what node to explore next?</strong></p>
+            <div class="quiz-options">
+              <button class="quiz-btn" data-correct="false">A) f(n) = g(n) - h(n)</button>
+              <button class="quiz-btn" data-correct="true">B) f(n) = g(n) + h(n)</button>
+              <button class="quiz-btn" data-correct="false">C) f(n) = h(n) only</button>
+              <button class="quiz-btn" data-correct="false">D) f(n) = g(n) × h(n)</button>
+            </div>
+            <div class="feedback" id="quizFeedback"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer-note">Made as a simple educational web app about the A* search algorithm.</p>
+    <div class="site-footer">© 2025 DoDo</div>
+  </div>
+
+  <script>
+    const rows = 10;
+    const cols = 12;
+    const boardEl = document.getElementById('board');
+    const statusText = document.getElementById('statusText');
+    const openCountEl = document.getElementById('openCount');
+    const closedCountEl = document.getElementById('closedCount');
+    const pathLengthEl = document.getElementById('pathLength');
+    const challengeResultEl = document.getElementById('challengeResult');
+    const speedSelect = document.getElementById('speedSelect');
+
+    let currentTool = 'wall';
+    let running = false;
+    let animationTimer = null;
+
+    let start = { r: 1, c: 1 };
+    let goal = { r: 8, c: 10 };
+
+    let grid = [];
+    let searchState = null;
+
+    function makeCell(r, c) {
+      return {
+        r, c,
+        wall: false,
+        open: false,
+        closed: false,
+        path: false,
+        g: Infinity,
+        h: 0,
+        f: Infinity,
+        parent: null
+      };
+    }
+
+    function initGrid() {
+      grid = Array.from({ length: rows }, (_, r) =>
+        Array.from({ length: cols }, (_, c) => makeCell(r, c))
+      );
+      searchState = null;
+      updateStats();
+      renderBoard();
+    }
+
+    function resetSearchMarks() {
+      stopAnimation();
+      for (const row of grid) {
+        for (const cell of row) {
+          cell.open = false;
+          cell.closed = false;
+          cell.path = false;
+          cell.g = Infinity;
+          cell.h = 0;
+          cell.f = Infinity;
+          cell.parent = null;
+        }
+      }
+      searchState = null;
+      statusText.textContent = 'Ready';
+      challengeResultEl.textContent = 'Challenge score will appear here after the run.';
+      updateStats();
+      renderBoard();
+    }
+
+    function clearWalls() {
+      for (const row of grid) {
+        for (const cell of row) cell.wall = false;
+      }
+      resetSearchMarks();
+    }
+
+    function heuristic(a, b) {
+      return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
+    }
+
+    function getNeighbors(cell) {
+      const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+      const result = [];
+      for (const [dr, dc] of dirs) {
+        const nr = cell.r + dr;
+        const nc = cell.c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+          result.push(grid[nr][nc]);
+        }
+      }
+      return result;
+    }
+
+    function prepareSearch() {
+      resetSearchMarks();
+      const startCell = grid[start.r][start.c];
+      const goalCell = grid[goal.r][goal.c];
+      startCell.g = 0;
+      startCell.h = heuristic(start, goal);
+      startCell.f = startCell.h;
+      startCell.open = true;
+      searchState = {
+        openSet: [startCell],
+        finished: false,
+        found: false,
+        goalCell
+      };
+      statusText.textContent = 'Searching';
+      updateStats();
+      renderBoard();
+    }
+
+    function reconstructPath(endCell) {
+      let cur = endCell;
+      let length = 0;
+      while (cur) {
+        cur.path = true;
+        cur.open = false;
+        cur.closed = false;
+        cur = cur.parent;
+        length++;
+      }
+      pathLengthEl.textContent = Math.max(0, length - 1);
+    }
+
+    function stepSearch() {
+      if (!searchState) prepareSearch();
+      if (!searchState || searchState.finished) return;
+
+      const openSet = searchState.openSet;
+      if (openSet.length === 0) {
+        searchState.finished = true;
+        statusText.textContent = 'No Path';
+        challengeResultEl.textContent = 'No valid path. Try removing some walls.';
+        stopAnimation();
+        updateStats();
+        renderBoard();
+        return;
+      }
+
+      openSet.sort((a, b) => a.f - b.f || a.h - b.h);
+      const current = openSet.shift();
+      current.open = false;
+      current.closed = true;
+
+      if (current.r === goal.r && current.c === goal.c) {
+        searchState.finished = true;
+        searchState.found = true;
+        reconstructPath(current);
+        statusText.textContent = 'Path Found';
+        const visited = countCells('closed');
+        const pathLen = Number(pathLengthEl.textContent);
+        challengeResultEl.textContent = `Success. Challenge score: ${visited + pathLen}. You made A* visit ${visited} nodes and the path length is ${pathLen}.`;
+        stopAnimation();
+        updateStats();
+        renderBoard();
+        return;
+      }
+
+      for (const neighbor of getNeighbors(current)) {
+        if (neighbor.wall || neighbor.closed) continue;
+
+        const tentativeG = current.g + 1;
+        if (tentativeG < neighbor.g) {
+          neighbor.parent = current;
+          neighbor.g = tentativeG;
+          neighbor.h = heuristic(neighbor, goal);
+          neighbor.f = neighbor.g + neighbor.h;
+
+          if (!neighbor.open) {
+            neighbor.open = true;
+            openSet.push(neighbor);
+          }
+        }
+      }
+
+      updateStats();
+      renderBoard();
+    }
+
+    function runAnimated() {
+      if (running) return;
+      if (!searchState) prepareSearch();
+      running = true;
+      const delay = Number(speedSelect.value);
+      animationTimer = setInterval(() => {
+        if (!searchState || searchState.finished) {
+          stopAnimation();
+          return;
+        }
+        stepSearch();
+      }, delay);
+    }
+
+    function stopAnimation() {
+      running = false;
+      if (animationTimer) clearInterval(animationTimer);
+      animationTimer = null;
+    }
+
+    function countCells(kind) {
+      let count = 0;
+      for (const row of grid) {
+        for (const cell of row) {
+          if (cell[kind]) count++;
+        }
+      }
+      return count;
+    }
+
+    function updateStats() {
+      openCountEl.textContent = countCells('open');
+      closedCountEl.textContent = countCells('closed');
+      if (statusText.textContent !== 'Path Found') {
+        pathLengthEl.textContent = countCells('path') > 0 ? countCells('path') - 1 : 0;
+      }
+    }
+
+    function classForCell(cell) {
+      if (cell.r === start.r && cell.c === start.c) return 'start';
+      if (cell.r === goal.r && cell.c === goal.c) return 'goal';
+      if (cell.path) return 'path';
+      if (cell.wall) return 'wall';
+      if (cell.closed) return 'closed';
+      if (cell.open) return 'open';
+      return 'empty';
+    }
+
+    function labelForCell(cell) {
+      if (cell.r === start.r && cell.c === start.c) return 'S';
+      if (cell.r === goal.r && cell.c === goal.c) return 'G';
+      if (cell.open || cell.closed) return Math.round(cell.f);
+      return '';
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = '';
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = grid[r][c];
+          const div = document.createElement('div');
+          div.className = `cell ${classForCell(cell)}`;
+          div.textContent = labelForCell(cell);
+          div.addEventListener('click', () => handleCellClick(r, c));
+          boardEl.appendChild(div);
+        }
+      }
+    }
+
+    function handleCellClick(r, c) {
+      if (running) return;
+      const cell = grid[r][c];
+      resetSearchMarks();
+
+      if (currentTool === 'wall') {
+        if ((r === start.r && c === start.c) || (r === goal.r && c === goal.c)) return;
+        cell.wall = !cell.wall;
+      } else if (currentTool === 'erase') {
+        cell.wall = false;
+      } else if (currentTool === 'start') {
+        if (cell.wall || (r === goal.r && c === goal.c)) return;
+        start = { r, c };
+      } else if (currentTool === 'goal') {
+        if (cell.wall || (r === start.r && c === start.c)) return;
+        goal = { r, c };
+      }
+
+      renderBoard();
+    }
+
+    function generateMaze() {
+      stopAnimation();
+      for (const row of grid) {
+        for (const cell of row) {
+          cell.wall = false;
+        }
+      }
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const isStartOrGoal = (r === start.r && c === start.c) || (r === goal.r && c === goal.c);
+          if (!isStartOrGoal && Math.random() < 0.26) {
+            grid[r][c].wall = true;
+          }
+        }
+      }
+
+      // Clear a rough corridor to increase chance of solvability
+      for (let c = Math.min(start.c, goal.c); c <= Math.max(start.c, goal.c); c++) grid[start.r][c].wall = false;
+      for (let r = Math.min(start.r, goal.r); r <= Math.max(start.r, goal.r); r++) grid[r][goal.c].wall = false;
+
+      resetSearchMarks();
+    }
+
+    document.getElementById('runBtn').addEventListener('click', runAnimated);
+    document.getElementById('stepBtn').addEventListener('click', () => {
+      stopAnimation();
+      stepSearch();
+    });
+    document.getElementById('resetSearchBtn').addEventListener('click', resetSearchMarks);
+    document.getElementById('clearWallsBtn').addEventListener('click', clearWalls);
+    document.getElementById('newMazeBtn').addEventListener('click', generateMaze);
+
+    document.querySelectorAll('.tool').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tool').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTool = btn.dataset.tool;
+      });
+    });
+
+    document.querySelectorAll('.quiz-btn').forEach(btn => {
+      if (btn.classList.contains('extra-quiz') || btn.classList.contains('extra-quiz-2')) return;
+      btn.addEventListener('click', () => {
+        const correct = btn.dataset.correct === 'true';
+        const feedback = document.getElementById('quizFeedback');
+        if (correct) {
+          feedback.textContent = 'Correct. A* uses f(n) = g(n) + h(n).';
+          feedback.style.color = 'var(--good)';
+        } else {
+          feedback.textContent = 'Not quite. A* adds the real cost so far and the estimated cost to the goal.';
+          feedback.style.color = 'var(--bad)';
+        }
+      });
+    });
+
+    document.querySelectorAll('.extra-quiz').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const feedback = document.getElementById('quizFeedback2');
+        if (btn.dataset.answer === 'correct') {
+          feedback.textContent = 'Correct. After the first move, g(n) = 1.';
+          feedback.style.color = 'var(--good)';
+        } else {
+          feedback.textContent = 'Try again. g(n) is the cost so far, so after one move it is 1.';
+          feedback.style.color = 'var(--bad)';
+        }
+      });
+    });
+
+    document.querySelectorAll('.extra-quiz-2').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const feedback = document.getElementById('quizFeedback3');
+        if (btn.dataset.answer === 'correct') {
+          feedback.textContent = 'Correct. h(n) = 10 in that step using Manhattan distance.';
+          feedback.style.color = 'var(--good)';
+        } else {
+          feedback.textContent = 'Not yet. The row difference and column difference add to 10.';
+          feedback.style.color = 'var(--bad)';
+        }
+      });
+    });
+
+    initGrid();
+  </script>
+</body>
+</html>
