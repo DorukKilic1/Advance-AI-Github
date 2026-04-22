@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>A* Search Explorer</title>
-  <meta name="description" content="A simple interactive web app that teaches the A* search algorithm with a mini game." />
+  <meta name="description" content="A website made by DoDo that teaches the A* search algorithm." />
   <style>
     :root {
       --bg: #070707;
@@ -255,21 +255,20 @@
     <section class="hero">
       <h1>A* Search Explorer</h1>
       <p>
-        This mini web app teaches how the A* search algorithm finds the shortest path. Build your own maze,
-        watch A* explore nodes step by step, and test your understanding with a small challenge game and quiz.
+        This app teaches students how a** search works. 
+        The formula for the A* search is f(n) = g(n) + h(n) which finds the most efficent route.
       </p>
       <p class="small">
-        Key idea: A* chooses the node with the lowest <strong>f(n) = g(n) + h(n)</strong>, where <strong>g</strong> is the cost so far and <strong>h</strong> is the estimated distance to the goal.
       </p>
     </section>
 
     <div class="layout">
       <aside>
         <div class="panel">
-          <h2>Controls</h2>
+          <h2>Modes</h2>
           <div class="controls">
-            <button class="primary" id="runBtn">Run A*</button>
-            <button class="secondary" id="stepBtn">Step Once</button>
+            <button class="primary" id="runBtn">Run Auto A*</button>
+            <button class="secondary" id="stepBtn">Step 1 by 1</button>
             <button class="secondary" id="resetSearchBtn">Reset Search</button>
             <button class="danger" id="clearWallsBtn">Clear Walls</button>
             <button class="secondary" id="newMazeBtn">Generate Maze</button>
@@ -282,20 +281,20 @@
         </div>
 
         <div class="panel">
-          <h3>Build Mode</h3>
+          <h3>Personalized Mode</h3>
           <div class="tool-row">
-            <button class="tool active" data-tool="wall">Wall</button>
-            <button class="tool" data-tool="erase">Erase</button>
-            <button class="tool" data-tool="start">Start</button>
-            <button class="tool" data-tool="goal">Goal</button>
+            <button class="tool active" data-tool="wall">Add Wall</button>
+            <button class="tool" data-tool="erase">Erase Object</button>
+            <button class="tool" data-tool="start">Add Start</button>
+            <button class="tool" data-tool="goal">Add End</button>
           </div>
-          <p class="small">Click cells to place walls, erase them, or move the start and goal.</p>
+          <p class="small">Click on the maze area after specifiying a block to personalize your maze.</p>
           <div class="legend">
             <div class="legend-item"><span class="swatch" style="background: var(--start)"></span>Start</div>
-            <div class="legend-item"><span class="swatch" style="background: var(--goal)"></span>Goal</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--goal)"></span>End</div>
             <div class="legend-item"><span class="swatch" style="background: var(--wall)"></span>Wall</div>
-            <div class="legend-item"><span class="swatch" style="background: var(--open)"></span>Open Set</div>
-            <div class="legend-item"><span class="swatch" style="background: var(--closed)"></span>Closed Set</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--open)"></span>Neighbors</div>
+            <div class="legend-item"><span class="swatch" style="background: var(--closed)"></span>Closed</div>
             <div class="legend-item"><span class="swatch" style="background: var(--path)"></span>Final Path</div>
           </div>
         </div>
@@ -305,9 +304,12 @@
           <ol class="small">
             <li>Start at the green square.</li>
             <li>Check neighboring nodes.</li>
-            <li>For each node, compute <strong>g</strong>, <strong>h</strong>, and <strong>f</strong>.</li>
+            <li>For each node, compute <strong>g Val</strong>, <strong>H val</strong>, and <strong>F Val</strong>.</li>
             <li>Always expand the node with the lowest <strong>f</strong>.</li>
             <li>Stop when the goal is reached and reconstruct the best path.</li>
+            <li>g(n) = Cost from the start to step.</li>
+            <li>h(n) = Sum of Row's and Col's untill end is reached.</li>
+            <li>f(n) = Total estimated path cost which is h(n) + g(n).</li>
           </ol>
         </div>
       </aside>
@@ -319,11 +321,11 @@
             <div class="stat-value" id="statusText">Ready</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Open Nodes</div>
+            <div class="stat-label">Neighbors</div>
             <div class="stat-value" id="openCount">0</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Visited Nodes</div>
+            <div class="stat-label">Number of Current Steps</div>
             <div class="stat-value" id="closedCount">0</div>
           </div>
           <div class="stat">
@@ -333,29 +335,29 @@
         </div>
 
         <div class="board-wrap">
-          <h2>Interactive Grid</h2>
-          <p class="small">Create an obstacle course, then run A* and watch it search for the shortest route.</p>
+          <h2>Maze Game</h2>
+          <p class="small">Create an auto or personalized maze then intract with a mode option to start.</p>
           <div class="board" id="board"></div>
         </div>
 
         <div class="info-grid">
           <div class="panel">
-            <h2>Mini Game: Beat the Algorithm</h2>
+            <h2>Maze Game.</h2>
             <p>
-              Your challenge is to place walls that make the path longer without blocking the goal completely.
-              Try to create a maze where A* still succeeds, but has to explore many nodes.
+              Your challenge is to create diffrenent maze's to make try and get the longest path length.
+              Try to create a maze where A* still succeeds but has to explore many nodes.
             </p>
             <ul class="small">
               <li>Create walls.</li>
-              <li>Press <strong>Run A*</strong>.</li>
-              <li>Goal: make visited nodes high while still keeping a valid path.</li>
+              <li>Press <strong>Run A* or Step Once</strong>.</li>
+              <li>Goal: try to get the longest path you can.</li>
             </ul>
-            <p class="small" id="challengeResult">Challenge score will appear here after the run.</p>
+            <p class="small" id="challengeResult">Your score will be here after the maze ends.</p>
           </div>
 
           <div class="panel">
             <h2>Quick Quiz</h2>
-            <p><strong>Which expression does A* use to decide what node to explore next?</strong></p>
+            <p><strong>Which formula does A* use to decide which path it should choose?</strong></p>
             <div class="quiz-options">
               <button class="quiz-btn" data-correct="false">A) f(n) = g(n) - h(n)</button>
               <button class="quiz-btn" data-correct="true">B) f(n) = g(n) + h(n)</button>
@@ -368,7 +370,7 @@
       </section>
     </div>
 
-    <p class="footer-note">Made as a simple educational web app about the A* search algorithm.</p>
+    <p class="footer-note"></p>
     <div class="site-footer">© 2025 DoDo</div>
   </div>
 
