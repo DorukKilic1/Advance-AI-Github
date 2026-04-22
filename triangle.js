@@ -22,6 +22,7 @@ const state = {
   points: [],
   hover: null,
   currentAngles: null,
+  currentAttempt: null,
   history: {
     exists: false,
     attempt: null,
@@ -148,15 +149,19 @@ function compute(updateHistory = true) {
   state.currentAngles = result.previewAngles || null;
   updateResults(result);
 
+  const attempt = {
+    mode: state.mode,
+    inputs: inputsSnapshot,
+    points: pointsSnapshot,
+    results: result,
+    previewAngles: result.previewAngles || null,
+  };
+
   if (updateHistory) {
-    const attempt = {
-      mode: state.mode,
-      inputs: inputsSnapshot,
-      points: pointsSnapshot,
-      results: result,
-      previewAngles: result.previewAngles || null,
-    };
-    updateHistoryPanel(attempt);
+    if (state.currentAttempt) {
+      updateHistoryPanel(state.currentAttempt);
+    }
+    state.currentAttempt = attempt;
   }
 
   renderCanvas();
